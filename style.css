@@ -1,0 +1,216 @@
+/* =====================================================
+   ESTILO GLOBAL — Copa do Mundo
+   - Reset básico para padronizar entre navegadores
+   - Variáveis CSS para cores e espaçamentos (design tokens)
+   ===================================================== */
+:root {
+  --color-bg: #0f1722;          /* fundo principal escuro (couro de bola) */
+  --color-surface: #16202e;     /* cards */
+  --color-surface-2: #1d2a3c;   /* hover/destaque */
+  --color-text: #e8eef7;        /* texto principal */
+  --color-muted: #8aa0bd;       /* texto secundário */
+  --color-accent: #facc15;      /* dourado da taça */
+  --color-accent-2: #22c55e;    /* verde gramado */
+  --color-danger: #ef4444;
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --sidebar-w: 260px;
+}
+/* Reset simples */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at top left, #1b2738, var(--color-bg) 60%);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+a { color: inherit; text-decoration: none; }
+/* =====================================================
+   SIDEBAR FIXA À ESQUERDA
+   ===================================================== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: linear-gradient(180deg, #0b1320, #111c2e);
+  border-right: 1px solid rgba(255,255,255,.06);
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  z-index: 10;
+}
+.sidebar__brand { display: flex; align-items: center; gap: 12px; }
+.sidebar__brand h2 { font-size: 1.15rem; letter-spacing: .5px; }
+/* "Bolinha logo" — mini bola de futebol decorativa */
+.ball--logo {
+  width: 34px; height: 34px;
+  background:
+    radial-gradient(circle at 30% 30%, #fff 0 6px, transparent 7px),
+    radial-gradient(circle at 70% 65%, #000 0 4px, transparent 5px),
+    #f5f5f5;
+  border-radius: 50%;
+  border: 2px solid #111;
+  box-shadow: inset -4px -4px 8px rgba(0,0,0,.25);
+}
+.sidebar__nav ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.sidebar__nav a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--color-muted);
+  font-weight: 500;
+  transition: background .2s, color .2s, transform .2s;
+}
+.sidebar__nav a:hover {
+  background: var(--color-surface-2);
+  color: var(--color-accent);
+  transform: translateX(4px);
+}
+.sidebar__footer { margin-top: auto; color: var(--color-muted); }
+/* =====================================================
+   ÁREA PRINCIPAL
+   ===================================================== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 40px clamp(20px, 5vw, 60px);
+  max-width: 1100px;
+}
+.card {
+  background: var(--color-surface);
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: var(--radius);
+  padding: 28px 30px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.card h1 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin-bottom: 14px;
+  color: var(--color-accent);
+}
+.card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: var(--color-accent);
+}
+.card p + p { margin-top: 12px; }
+.muted { color: var(--color-muted); font-size: .95rem; margin-bottom: 18px; }
+/* =====================================================
+   LINHA DO TEMPO — grade de bolinhas de futebol
+   ===================================================== */
+.timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 18px;
+  margin-top: 10px;
+}
+/* Cada bolinha é um botão acessível com aparência de bola de futebol */
+.ball {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border-radius: 50%;
+  border: 2px solid #111;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at 50% 50%, #000 0 18%, transparent 19%),
+    radial-gradient(circle at 15% 30%, #000 0 10%, transparent 11%),
+    radial-gradient(circle at 85% 30%, #000 0 10%, transparent 11%),
+    radial-gradient(circle at 25% 80%, #000 0 10%, transparent 11%),
+    radial-gradient(circle at 75% 80%, #000 0 10%, transparent 11%),
+    #fafafa;
+  box-shadow: inset -6px -8px 14px rgba(0,0,0,.25), 0 4px 10px rgba(0,0,0,.4);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  color: #111;
+  font-size: .9rem;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.ball:hover { transform: translateY(-4px) scale(1.05); }
+.ball.is-active {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+/* Etiqueta do ano dentro da bolinha (fundo branco para legibilidade) */
+.ball__year {
+  background: rgba(255,255,255,.85);
+  padding: 2px 6px;
+  border-radius: 6px;
+  position: relative;
+  z-index: 1;
+}
+/* =====================================================
+   PAINEL DE DETALHES DINÂMICO
+   ===================================================== */
+.details__placeholder { color: var(--color-muted); font-style: italic; }
+.details-header { margin-bottom: 18px; }
+.details-header h3 { font-size: 1.5rem; color: var(--color-text); }
+.details-header span { color: var(--color-muted); }
+.teams {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin: 18px 0 22px;
+}
+.team-card {
+  background: var(--color-surface-2);
+  border-radius: 12px;
+  padding: 18px 20px;
+  border-left: 5px solid var(--color-muted);
+}
+.team-card--champion { border-left-color: var(--color-accent); }
+.team-card--runner   { border-left-color: #94a3b8; }
+.team-card h4 {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-muted);
+  margin-bottom: 6px;
+}
+.team-card .country {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.stats { display: flex; gap: 18px; flex-wrap: wrap; }
+.stats div { font-size: .95rem; }
+.stats strong { display: block; font-size: 1.2rem; color: var(--color-accent-2); }
+/* Placeholders das fotos */
+.photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.photos img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: #0b1320;
+  border: 1px dashed rgba(255,255,255,.15);
+  border-radius: 10px;
+  color: var(--color-muted);
+  font-size: .8rem;
+  text-align: center;
+}
+/* =====================================================
+   RESPONSIVIDADE
+   - Em telas estreitas, sidebar vira topo
+   ===================================================== */
+@media (max-width: 760px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    gap: 12px;
+  }
+  .sidebar__nav ul { flex-direction: row; gap: 4px; }
+  .sidebar__nav a { padding: 6px 10px; font-size: .9rem; }
+  .sidebar__footer { display: none; }
+  .main { margin-left: 0; padding: 24px 18px; }
+  .photos { grid-template-columns: 1fr; }
+}
