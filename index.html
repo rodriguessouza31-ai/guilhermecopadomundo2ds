@@ -1,1 +1,546 @@
-<h1>testando a pagina</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almanaque Histórico das Copas do Mundo</title>
+    <style>
+        /* ==========================================================================
+           1. ESTILIZAÇÃO GERAL E FUNDO TEMÁTICO (BANDEIRAS)
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #fafafa;
+            /* Padrão sutil de fundo simulando mosaico de cores e bandeiras festivas */
+            background-image: radial-gradient(circle at 20% 30%, rgba(0, 156, 59, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 75% 60%, rgba(255, 223, 0, 0.06) 0%, transparent 45%),
+                              radial-gradient(circle at 50% 10%, rgba(0, 36, 125, 0.04) 0%, transparent 35%),
+                              radial-gradient(circle at 90% 20%, rgba(213, 43, 30, 0.05) 0%, transparent 30%);
+            color: #333;
+        }
+
+        /* ==========================================================================
+           2. MENU LATERAL ESQUERDO (SIDEBAR)
+           ========================================================================== */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #005c27, #008f39);
+            padding: 20px 10px;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto; /* Permite rolar os botões se a tela for pequena */
+            z-index: 100;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #ffdf00;
+            padding-bottom: 10px;
+            width: 90%;
+        }
+
+        /* Container que alinha as bolas do menu */
+        .balls-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            padding: 5px;
+        }
+
+        /* ==========================================================================
+           3. BOTÕES EM FORMATO DE BOLA DE FUTEBOL
+           ========================================================================== */
+        .ball-button {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #dcdcdc 50%, #999999 100%);
+            /* Efeito de gomos de bola usando SVG embutido no background */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 L65 30 L95 35 L70 60 L80 90 L50 75 L20 90 L30 60 L5 35 L35 30 Z' fill='none' stroke='%23555' stroke-width='1.5' stroke-opacity='0.2'/%3E%3Ccircle cx='50' cy='50' r='50' fill='none' stroke='%23333' stroke-width='2' stroke-opacity='0.15'/%3E%3C/svg%3E");
+            color: #111;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .ball-button:hover {
+            transform: scale(1.1) rotate(15deg);
+            border-color: #ffdf00;
+            box-shadow: 0 8px 15px rgba(255, 223, 0, 0.4);
+        }
+
+        .ball-button.active {
+            border-color: #ffdf00;
+            background: radial-gradient(circle at 30% 30%, #ffdf00, #d4af37 60%, #aa8010 100%);
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            transform: scale(1.05);
+        }
+
+        /* ==========================================================================
+           4. ÁREA DE CONTEÚDO CENTRAL
+           ========================================================================== */
+        .main-content {
+            margin-left: 280px; /* Alinha o conteúdo para não ficar embaixo da sidebar */
+            padding: 40px;
+            width: calc(100% - 280px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 850px;
+            padding: 40px;
+            border-top: 8px solid #008f39;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-title {
+            text-align: center;
+            color: #005c27;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .welcome-text {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Elementos da exibição da copa */
+        .copa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .copa-title {
+            font-size: 2.4rem;
+            color: #005c27;
+        }
+
+        .resumo-texto {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            color: #444;
+            text-align: justify;
+        }
+
+        /* Grid de Campeão e Vice */
+        .teams-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .team-box {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .box-campeao {
+            background: linear-gradient(135deg, #d4af37, #aa8010);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .box-vice {
+            background: linear-gradient(135deg, #7a7a7a, #555555);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .team-role {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .team-name {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-line {
+            font-size: 1rem;
+            margin-top: 5px;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* Seção de Cartões e Disciplina */
+        .cards-section {
+            background: #f9f9f9;
+            border-left: 5px solid #ffdf00;
+            padding: 15px 20px;
+            border-radius: 4px 12px 12px 4px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 6px;
+            color: #111;
+        }
+
+        .yellow-label { background-color: #ffeb3b; }
+        .red-label { background-color: #f44336; color: #fff; }
+
+        /* Bloco de Curiosidades */
+        .curiosidade-box {
+            background-color: #e8f5e9;
+            border: 1px dashed #008f39;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .curiosidade-box h4 {
+            color: #005c27;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ==========================================================================
+           5. RESPONSIVIDADE (TELA MOBILE)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                bottom: auto;
+            }
+            .balls-container {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            .ball-button {
+                width: 75px;
+                height: 75px;
+                font-size: 0.9rem;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 15px;
+            }
+            .copa-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2>Copas</h2>
+        <div class="balls-container" id="sidebarMenu">
+            </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="card" id="contentCard">
+            <h1 class="welcome-title">História das Copas do Mundo</h1>
+            <p class="welcome-text">Selecione uma das bolas de futebol no menu lateral para explorar as estatísticas, campeões, gols, cartões e curiosidades de cada edição do maior espetáculo da Terra!</p>
+        </div>
+    </main>
+
+    <script>
+        // Banco de dados completo contendo o histórico de todas as 22 edições (1930 a 2022)
+        const copasDados = {
+            "1930": {
+                local: "Uruguai", campeao: "Uruguai", vice: "Argentina",
+                golsCampeao: 15, golsVice: 18,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "A primeira Copa do Mundo da história foi realizada inteiramente na cidade de Montevidéu. Sem eliminatórias, participaram 13 seleções convidadas pela FIFA.",
+                curiosidade: "Na grande final, houve uma disputa sobre qual bola usar. O primeiro tempo foi jogado com a bola argentina (Argentina vencia por 2x1); o segundo tempo usou a bola uruguaia, e o Uruguai virou para 4x2."
+            },
+            "1934": {
+                local: "Itália", campeao: "Itália", vice: "Tchecoslováquia",
+                golsCampeao: 12, golsVice: 9,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "A primeira Copa em solo europeu foi marcada pelo clima político sob o regime fascista de Mussolini. Foi um torneio eliminatório direto do início ao fim.",
+                curiosidade: "A Itália contou com vários jogadores ítalo-argentinos (oriundi) em seu elenco, incluindo Luis Monti, que havia jogado a final de 1930 pela Argentina."
+            },
+            "1938": {
+                local: "França", campeao: "Itália", vice: "Hungria",
+                golsCampeao: 11, golsVice: 15,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "Com ventos de guerra soprando na Europa, a Itália sagrou-se bicampeã consecutiva mostrando um futebol tático fortíssimo comandado por Vittorio Pozzo.",
+                curiosidade: "O brasileiro Leônidas da Silva, o 'Diamante Negro', jogou e marcou gols descalço contra a Polônia sob uma tempestade de lama, pois sua chuteira havia rasgado."
+            },
+            "1950": {
+                local: "Brasil", campeao: "Uruguai", vice: "Brasil",
+                golsCampeao: 15, golsVice: 22,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "A Copa voltou após a 2ª Guerra Mundial. O Brasil construiu o gigantesco Maracanã e precisava apenas de um empate na rodada final do quadrangular para ser campeão.",
+                curiosidade: "O episódio ficou conhecido mundialmente como 'Maracanazo'. Ghiggia marcou o gol da virada uruguaia por 2x1, calando mais de 170 mil pessoas no estádio."
+            },
+            "1954": {
+                local: "Suíça", campeao: "Alemanha Ocidental", vice: "Hungria",
+                golsCampeao: 25, golsVice: 27,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "A Hungria era a maior seleção do mundo e massacrou a própria Alemanha na fase de grupos por 8x3. Na final, os húngaros abriram 2x0 rapidamente.",
+                curiosidade: "A virada alemã por 3x2 na final ficou conhecida como 'O Milagre de Berna'. A Alemanha usou travas de chuteira ajustáveis da Adidas (inéditas), ideais para a chuva torrencial do segundo tempo."
+            },
+            "1958": {
+                local: "Suécia", campeao: "Brasil", vice: "Suécia",
+                golsCampeao: 16, golsVice: 12,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "O mundo parou para assistir ao surgimento de um menino de 17 anos chamado Pelé e os dribles desconcertantes de Garrincha. O Brasil conquistou sua primeira estrela.",
+                curiosidade: "O Brasil teve que jogar a final com camisas azuis emprestadas, pois a Suécia também vestia amarelo. O chefe da delegação acalmou os jogadores dizendo que era a cor do manto de Nossa Senhora Aparecida."
+            },
+            "1962": {
+                local: "Chile", campeao: "Brasil", vice: "Tchecoslováquia",
+                golsCampeao: 14, golsVice: 7,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "Pelé se machucou logo no segundo jogo, mas Garrincha assumiu a responsabilidade de forma genial, liderando o Brasil ao bicampeonato mundial.",
+                curiosidade: "No jogo contra a Inglaterra, um cachorro invadiu o campo e driblou vários jogadores. O atacante inglês Jimmy Greaves conseguiu pegá-lo de quatro patas, mas o cão acabou urinando na camisa dele. Garrincha achou tanta graça que adotou o cachorro."
+            },
+            "1966": {
+                local: "Inglaterra", campeao: "Inglaterra", vice: "Alemanha Ocidental",
+                golsCampeao: 11, golsVice: 15,
+                cartoesAmarelos: "Não implementado", cartoesVermelhos: "Não implementado",
+                resumo: "Os criadores do futebol venceram em casa. Uma Copa física, pegada e marcada pela grande atuação do português Eusébio.",
+                curiosidade: "A final teve o gol mais polêmico da história: o chute do inglês Geoff Hurst bateu no travessão e quicou em cima da linha (ou fora). O bandeirinha validou o gol, abrindo caminho para o título inglês."
+            },
+            "1970": {
+                local: "México", campeao: "Brasil", vice: "Itália",
+                golsCampeao: 19, golsVice: 10,
+                cartoesAmarelos: 4, cartoesVermelhos: 0, /* Dados específicos do campeão+vice acumulados */
+                resumo: "A consagração definitiva do futebol-arte. O Brasil montou uma equipe lendária com Pelé, Tostão, Rivellino, Gérson e Jairzinho, vencendo todos os jogos.",
+                curiosidade: "Esta foi a primeira Copa com cartões amarelos e vermelhos físicos e substituições permitidas. Curiosamente, nenhum jogador foi expulso (cartão vermelho) durante todo o torneio."
+            },
+            "1974": {
+                local: "Alemanha Ocidental", campeao: "Alemanha Ocidental", vice: "Holanda",
+                golsCampeao: 13, golsVice: 15,
+                cartoesAmarelos: 16, cartoesVermelhos: 1,
+                resumo: "A Holanda revolucionou o mundo com o 'Carrossel Holandês' de Johan Cruyff. Mas na final, o pragmatismo e poder de reação da Alemanha de Gerd Müller prevaleceram.",
+                curiosidade: "O capitão alemão Franz Beckenbauer revolucionou a posição de líbero, jogando com elegância defensiva e atacando constantemente como um meio-campista."
+            },
+            "1978": {
+                local: "Argentina", campeao: "Argentina", vice: "Holanda",
+                golsCampeao: 15, golsVice: 15,
+                cartoesAmarelos: 8, cartoesVermelhos: 0,
+                resumo: "Sob uma tensa ditadura militar local, a Argentina empurrada pela torcida conquistou seu primeiro mundial na prorrogação contra os holandeses.",
+                curiosidade: "A partida contra o Peru na segunda fase gerou polêmicas eternas: a Argentina precisava vencer por 4 gols de diferença para eliminar o Brasil, e acabou goleando por 6x0."
+            },
+            "1982": {
+                local: "Espanha", campeao: "Itália", vice: "Alemanha Ocidental",
+                golsCampeao: 12, golsVice: 12,
+                cartoesAmarelos: 11, cartoesVermelhos: 1,
+                resumo: "A Itália começou mal, mas cresceu no mata-mata liderada por Paolo Rossi, que eliminou a mágica e favorita Seleção Brasileira de Zico e Sócrates.",
+                curiosidade: "O goleiro e capitão italiano Dino Zoff tornou-se o jogador mais velho a vencer uma Copa do Mundo na história, erguendo a taça aos 40 anos de idade."
+            },
+            "1986": {
+                local: "México", campeao: "Argentina", vice: "Alemanha Ocidental",
+                golsCampeao: 14, golsVice: 8,
+                cartoesAmarelos: 14, cartoesVermelhos: 0,
+                resumo: "A Copa que coroou Diego Armando Maradona. O craque argentino jogou o torneio mais dominante individualmente que o futebol já viu.",
+                curiosidade: "Nas quartas de final contra a Inglaterra, Maradona fez os dois gols mais famosos das Copas no mesmo jogo: um usando visivelmente a mão ('A Mão de Deus') e outro arrancando do meio de campo, driblando seis ingleses."
+            },
+            "1990": {
+                local: "Itália", campeao: "Alemanha Ocidental", vice: "Argentina",
+                golsCampeao: 15, golsVice: 5,
+                cartoesAmarelos: 23, cartoesVermelhos: 3,
+                resumo: "Considerada uma das Copas com pior média de gols e futebol muito defensivo. Uma reedição da final anterior, decidida por um pênalti no final.",
+                curiosidade: "A grande sensação foi a seleção de Camarões e o veterano Roger Milla, de 38 anos, que comemorava seus gols sambando na bandeira de escanteio."
+            },
+            "1994": {
+                local: "Estados Unidos", campeao: "Brasil", vice: "Itália",
+                golsCampeao: 11, golsVice: 8,
+                cartoesAmarelos: 17, cartoesVermelhos: 1,
+                resumo: "O Brasil encerrou um jejum de 24 anos. Comandados por Romário e Bebeto no ataque e Dunga na raça, o tetra veio nos EUA.",
+                curiosidade: "Foi a primeira final da história das Copas decidida nos pênaltis, após um doloroso 0x0 no tempo normal. O craque italiano Roberto Baggio isolou a bola por cima do travessão, decretando o título do Brasil."
+            },
+            "1998": {
+                local: "França", campeao: "França", vice: "Brasil",
+                golsCampeao: 15, golsVice: 14,
+                cartoesAmarelos: 21, cartoesVermelhos: 3,
+                resumo: "Jogando em casa, a França de Zinedine Zidane chegou ao topo do mundo atropelando o Brasil na grande final.",
+                curiosidade: "Horas antes da final, o craque brasileiro Ronaldo Fenômeno sofreu uma convulsão misteriosa no hotel. Ele foi escalado de última hora, mas o time abalado não conseguiu segurar a França."
+            },
+            "2002": {
+                local: "Coreia do Sul e Japão", campeao: "Brasil", vice: "Alemanha",
+                golsCampeao: 18, golsVice: 14,
+                cartoesAmarelos: 12, cartoesVermelhos: 1,
+                resumo: "A primeira Copa na Ásia. Ronaldo deu a volta por cima após as lesões no joelho e, junto com Rivaldo e Ronaldinho Gaúcho (os Três Rs), trouxe o Pentacampeonato invicto.",
+                curiosidade: "O capitão Cafu tornou-se o primeiro e único jogador na história a disputar três finais de Copa do Mundo consecutivas (1994, 1998 e 2002)."
+            },
+            "2006": {
+                local: "Alemanha", campeao: "Itália", vice: "França",
+                golsCampeao: 12, golsVice: 9,
+                cartoesAmarelos: 27, cartoesVermelhos: 3,
+                resumo: "Uma Copa recheada de craques veteranos. A Itália mostrou uma defesa intransponível e faturou o tetracampeonato após bater a França nos pênaltis.",
+                curiosidade: "A final ficou marcada pela bizarra despedida de Zinedine Zidane do futebol profissional. Ele foi expulso na prorrogação após desferir uma cabeçada violenta no peito do zagueiro italiano Materazzi."
+            },
+            "2010": {
+                local: "África do Sul", campeao: "Espanha", vice: "Holanda",
+                golsCampeao: 8, golsVice: 12,
+                cartoesAmarelos: 34, cartoesVermelhos: 2,
+                resumo: "A primeira Copa no continente africano, embalada pelo som ensurdecedor das vuvuzelas. A Espanha encantou com o estilo de passes 'Tiki-Taka'.",
+                curiosidade: "A final entre Espanha e Holanda bateu o recorde de cartões em uma decisão (14 amarelos e 1 vermelho). O holandês De Jong acertou uma voadora no peito de Xabi Alonso que virou imagem icônica do torneio."
+            },
+            "2014": {
+                local: "Brasil", campeao: "Alemanha", vice: "Argentina",
+                golsCampeao: 18, golsVice: 8,
+                cartoesAmarelos: 12, cartoesVermelhos: 0,
+                resumo: "O torneio retornou ao Brasil. A Alemanha demonstrou um futebol coletivo espetacular e conquistou o título no Maracanã contra a Argentina de Messi.",
+                curiosidade: "A semifinal ficou marcada pelo maior vexame da história do futebol brasileiro: o fatídico '7x1' aplicado pela Alemanha no Mineirão. Os alemães fizeram 5 gols apenas no primeiro tempo."
+            },
+            "2018": {
+                local: "Rússia", campeao: "França", vice: "Croácia",
+                golsCampeao: 14, golsVice: 14,
+                cartoesAmarelos: 15, cartoesVermelhos: 0,
+                resumo: "A Copa marcada pela estreia da tecnologia do VAR. A França, com um elenco jovem e veloz liderado por Kylian Mbappé, faturou o bicampeonato.",
+                curiosidade: "A Croácia surpreendeu o planeta jogando três prorrogações seguidas no mata-mata (equivalente a jogar uma partida inteira a mais), demonstrando um vigor físico inacreditável para chegar à final."
+            },
+            "2022": {
+                local: "Catar", campeao: "Argentina", vice: "França",
+                golsCampeao: 15, golsVice: 16,
+                cartoesAmarelos: 23, cartoesVermelhos: 0,
+                resumo: "A primeira Copa realizada no final do ano civil por conta do calor do deserto. Teve uma das finais mais emocionantes e dramáticas de todos os tempos, terminada em 3x3.",
+                curiosidade: "Lionel Messi finalmente coroou sua carreira lendária erguendo a taça, vencendo o duelo épico de Titãs contra seu companheiro de clube, Mbappé, que marcou um hat-trick (3 gols) na final mas ficou com o vice."
+            }
+        };
+
+        // Renderiza as bolas com os anos no menu esquerdo ao carregar a página
+        const container = document.getElementById("sidebarMenu");
+        
+        Object.keys(copasDados).forEach(ano => {
+            // Cria o botão dinamicamente
+            const button = document.createElement("button");
+            button.classList.add("ball-button");
+            button.textContent = ano;
+            
+            // Adiciona o evento de clique para exibir as informações da Copa selecionada
+            button.addEventListener("click", () => {
+                // Remove a classe ativa de qualquer outra bola
+                document.querySelectorAll(".ball-button").forEach(b => b.classList.remove("active"));
+                // Ativa a bola atual
+                button.classList.add("active");
+                
+                // Atualiza a tela central com os dados da copa correspondente
+                exibirDadosCopa(ano);
+            });
+            
+            container.appendChild(button);
+        });
+
+        // Função responsável por montar o HTML interno do Card de informações
+        function exibirDadosCopa(ano) {
+            const dados = copasDados[ano];
+            const card = document.getElementById("contentCard");
+
+            // Tratamento lógico visual para os cartões anteriores a 1970
+            let cartoesHTML = "";
+            if (typeof dados.cartoesAmarelos === "string") {
+                // Caso não tenha cartões (1930 a 1966)
+                cartoesHTML = `<p style="color: #c0392b; font-weight: bold; font-style: italic;">⚠️ ${dados.cartoesAmarelos} nesta edição (introduzidos em 1970).</p>`;
+            } else {
+                // Caso tenha cartões (1970 em diante)
+                cartoesHTML = `
+                    <span class="card-badge yellow-label">🟨 Amarelos: ${dados.cartoesAmarelos}</span>
+                    <span class="card-badge red-label">🟥 Vermelhos: ${dados.cartoesVermelhos}</span>
+                    <small style="display:block; margin-top:5px; color:#666;">(Acumulados por atletas de ambos os finalistas)</small>
+                `;
+            }
+
+            // Injeta o novo template atualizado com as informações coletadas do objeto
+            card.innerHTML = `
+                <div class="copa-header">
+                    <h1 class="copa-title">Copa do Mundo ${ano}</h1>
+                    <span style="font-size: 1.2rem; background: #ffdf00; padding: 5px 15px; border-radius: 20px; font-weight: bold; color: #005c27;">Sede: ${dados.local}</span>
+                </div>
+
+                <p class="resumo-texto">${dados.resumo}</p>
+
+                <div class="teams-grid">
+                    <div class="team-box box-campeao">
+                        <div class="team-role">🏆 Campeão</div>
+                        <div class="team-name">${dados.campeao}</div>
+                        <div class="stat-line">⚽ Gols no torneio: <strong>${dados.golsCampeao}</strong></div>
+                    </div>
+                    <div class="team-box box-vice">
+                        <div class="team-role">🥈 Vice-Campeão</div>
+                        <div class="team-name">${dados.vice}</div>
+                        <div class="stat-line">⚽ Gols no torneio: <strong>${dados.golsVice}</strong></div>
+                    </div>
+                </div>
+
+                <div class="cards-section">
+                    <div>
+                        <h4 style="margin-bottom: 8px; color: #333;">📊 Disciplina na Final / Equipes:</h4>
+                        ${cartoesHTML}
+                    </div>
+                </div>
+
+                <div class="curiosidade-box">
+                    <h4>💡 Curiosidade da Edição</h4>
+                    <p style="color: #2e7d32; line-height: 1.6; text-align: justify;">${dados.curiosidade}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
